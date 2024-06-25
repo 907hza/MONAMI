@@ -1,1 +1,1 @@
-# MONAMI
+# MONAMI study project
