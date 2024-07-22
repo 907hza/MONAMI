@@ -22,8 +22,10 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.sist.common.util.StringUtil;
 import com.sist.study.model.Response;
-import com.sist.study.model.User;
-import com.sist.study.service.UserService;
+import com.sist.study.model.StManager;
+import com.sist.study.model.StUser;
+import com.sist.study.service.StManagerService;
+import com.sist.study.service.StUserService;
 import com.sist.common.util.CookieUtil;
 import com.sist.common.util.HttpUtil;
 import com.sist.common.util.JsonUtil;
@@ -42,12 +44,15 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 {
 	private static Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 	
-	private String AUTH_COOKIE_NAME;
-	
+	private String AUTH_COOKIE_USER;
+	private String AUTH_COOKIE_MANAGER;	
 	private String AJAX_HEADER_NAME;
 	
 	@Autowired
-	private UserService userService;
+	private StUserService stUserService;
+	
+	@Autowired
+	private StManagerService stManagerService;
 	
 	// 인증체크 안해도 되는 url 리스트
 	private List<String> authExcludeUrlList;
@@ -57,7 +62,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 	 */
 	public AuthInterceptor()
 	{
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 	
 	/**
@@ -65,9 +70,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 	 * 
 	 * @param authExcludeUrlList 인증 체크에서 제외될 URL 리스트
 	 */
-	public AuthInterceptor(String authCookieName, String ajaxHeaderName, List<String> authExcludeUrlList)
+	public AuthInterceptor(String authCookieStUser, String authCookieStManager, String ajaxHeaderName, List<String> authExcludeUrlList)
 	{
-		this.AUTH_COOKIE_NAME = authCookieName;
+		this.AUTH_COOKIE_USER = authCookieStUser;
+		this.AUTH_COOKIE_MANAGER = authCookieStManager;
 		this.AJAX_HEADER_NAME = ajaxHeaderName;
 		this.authExcludeUrlList = authExcludeUrlList;
 		
@@ -79,7 +85,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 			logger.debug("//////////////////////////////////////////////////");
 			logger.debug("// Auth Cookie Name                             //");
 			logger.debug("//////////////////////////////////////////////////");
-			logger.debug("// " + AUTH_COOKIE_NAME);
+			logger.debug("// " + AUTH_COOKIE_USER);
+			logger.debug("//////////////////////////////////////////////////");
+			logger.debug("// " + AUTH_COOKIE_MANAGER);
 			logger.debug("//////////////////////////////////////////////////");
 			logger.debug("//////////////////////////////////////////////////");
 			logger.debug("// Ajax Header Name                             //");
@@ -119,7 +127,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 		boolean ajaxFlag = false;
 		
 		// 쿠키명 입력
-		request.setAttribute("AUTH_COOKIE_NAME", AUTH_COOKIE_NAME);
+		request.setAttribute("AUTH_COOKIE_MANAGER", AUTH_COOKIE_MANAGER);
 		
 		String url = request.getRequestURI();
 		
@@ -151,9 +159,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 			}
 			
 			// 인증 체크
-			if(CookieUtil.getCookie(request, AUTH_COOKIE_NAME) != null)
+			if(CookieUtil.getCookie(request, AUTH_COOKIE_MANAGER) != null)
 			{
-				String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+				String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_MANAGER);
 				
 				if(!StringUtil.isEmpty(cookieUserId))
 				{
@@ -164,37 +172,76 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 					
 					if(!StringUtil.isEmpty(cookieUserId))
 					{
-						User user = userService.userSelect(cookieUserId);
+						StManager stManager = stManagerService.stManagerSelect(cookieUserId);
 						
-						if(user != null && StringUtil.equals(user.getStatus(), "Y"))
+						if(stManager != null && StringUtil.equals(stManager.getStatus(), "Y"))
 						{
 							bFlag = true;
 						}
 						else
 						{
 							// 인증된 사용자가 아니면 쿠키 삭제
-							CookieUtil.deleteCookie(request, response, AUTH_COOKIE_NAME);
+							CookieUtil.deleteCookie(request, response, AUTH_COOKIE_MANAGER);
 							bFlag = false;
 						}
 					}
 					else
 					{
-						CookieUtil.deleteCookie(request, response, AUTH_COOKIE_NAME);
+						CookieUtil.deleteCookie(request, response, AUTH_COOKIE_MANAGER);
 						bFlag = false;
 					}
-					
-
 				}
 				else
 				{
-					CookieUtil.deleteCookie(request, response, AUTH_COOKIE_NAME);
-					
+					CookieUtil.deleteCookie(request, response, AUTH_COOKIE_MANAGER);	
 					bFlag = false;
 				}
 			}
 			else
 			{
-				bFlag = false;
+				request.setAttribute("AUTH_COOKIE_USER", AUTH_COOKIE_USER);
+					
+				if(CookieUtil.getCookie(request, AUTH_COOKIE_USER) != null)
+				{
+					String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_USER);
+					
+					if(!StringUtil.isEmpty(cookieUserId))
+					{
+						if(logger.isDebugEnabled())
+						{
+							logger.debug("# [Cookie] : [" + cookieUserId + "]");
+						}
+						
+						if(!StringUtil.isEmpty(cookieUserId))
+						{
+							StUser stUser = stUserService.stUserSelect(cookieUserId);
+							
+							if(stUser != null && StringUtil.equals(stUser.getStatus(), "Y"))
+							{
+								bFlag = true;
+							}
+							else
+							{
+								CookieUtil.deleteCookie(request, response, AUTH_COOKIE_USER);
+								bFlag = false;
+							}
+						}
+						else
+						{
+							CookieUtil.deleteCookie(request, response, AUTH_COOKIE_USER);
+							bFlag = false;
+						}
+					}
+					else
+					{
+						CookieUtil.deleteCookie(request, response, AUTH_COOKIE_USER);
+						bFlag = false;
+					}
+				}
+				else
+				{
+					bFlag = false;
+				}
 			}
 		}
 		

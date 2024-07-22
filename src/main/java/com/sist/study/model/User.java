@@ -10,9 +10,13 @@ public class User implements Serializable
 	private String userPwd;
 	private String userName;
 	private String userEmail;
+	private String userTel;
+	private int userPoint;
 	private String status;
+	private String userBirth;
 	private String regDate;
-	
+	private String userAddress;
+
 	public User()
 	{
 		userId = "";
@@ -21,59 +25,90 @@ public class User implements Serializable
 		userEmail = "";
 		status = "N";
 		regDate = "";
+		userTel ="";
+		userPoint =0;
+		userBirth="";
+		userAddress="";
 	}
 
-	public String getUserId()
-	{
+	public String getUserAddress() {
+		return userAddress;
+	}
+
+	public void setUserAddress(String userAddress) {
+		this.userAddress = userAddress;
+	}
+
+	public String getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) 
-	{
+
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	
-	public String getUserPwd() 
-	{
+
+	public String getUserPwd() {
 		return userPwd;
 	}
-	public void setUserPwd(String userPwd) 
-	{
+
+	public void setUserPwd(String userPwd) {
 		this.userPwd = userPwd;
 	}
-	
-	public String getUserName() 
-	{
+
+	public String getUserName() {
 		return userName;
 	}
-	public void setUserName(String userName)
-	{
+
+	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
-	public String getUserEmail() 
-	{
-		return userEmail;
-	}
-	public void setUserEmail(String userEmail) 
-	{
-		this.userEmail = userEmail;
-	}
-	
-	public String getStatus() 
-	{
+
+	public String getStatus() {
 		return status;
 	}
-	public void setStatus(String status) 
-	{
+
+	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	public String getRegDate()
-	{
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	public String getRegDate() {
 		return regDate;
 	}
-	public void setRegDate(String regDate)
-	{
+
+	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
+
+	public String getUserTel() {
+		return userTel;
+	}
+
+	public void setUserTel(String userTel) {
+		this.userTel = userTel;
+	}
+
+	public int getUserPoint() {
+		return userPoint;
+	}
+
+	public void setUserPoint(int userPoint) {
+		this.userPoint = userPoint;
+	}
+
+	public String getUserBirth() {
+		return userBirth;
+	}
+
+	public void setUserBirth(String userBirth) {
+		this.userBirth = userBirth;
+	}
+
 }	

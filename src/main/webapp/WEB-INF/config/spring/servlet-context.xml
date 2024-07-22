@@ -49,26 +49,44 @@
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/resources/**" />
             <bean id="authInterceptor" class="com.sist.study.interceptor.AuthInterceptor">
-            	<constructor-arg>
-            		<value>#{env['auth.cookie.name']}</value>
-            	</constructor-arg>
+				<constructor-arg>
+                  <value>#{env['auth.cookie.user']}</value>
+               </constructor-arg>
+               
+            <constructor-arg>
+                  <value>#{env['auth.cookie.manager']}</value>
+               </constructor-arg>
+
+
             	<constructor-arg>
             		<value>#{env['ajax.header.name']}</value>
             	</constructor-arg>
+            	
+
             	<constructor-arg> <!-- 인증체크 제외 URL 설정 -->
             		<list>
-            			<value>/index</value>
-            			<value>/user/login</value>
-            			<value>/user/regForm</value>
-            			<value>/user/idCheck</value>
-            			<value>/user/regProc</value>
-            			
-            			
-            			<value>/index2</value>
-            			<value>/user/login2</value>
-            			<value>/user/regForm2</value>
-            			<value>/user/idCheck2</value>
-            			<value>/user/regProc2</value>
+						<value>/main</value>
+						<value>/index</value>
+						
+                     	<value>/userLogin</value>
+                     	<value>/idcheck</value>
+                     	<value>/regProc</value>
+                     	
+                     	<value>/manager/login</value>
+                     	
+                  		<value>/reboard/list</value>
+                  		<value>/reboard/view</value>
+                  		
+                  		<value>/shop/shop</value>
+                  		<value>/shop/single</value>
+                  		
+                  		<value>/qna/qnaList</value>
+                  		<value>/qna/qnaView</value>
+                  		
+                  		<value>/kakao/Payment</value>
+          				<value>/kakao/payResult</value>
+          				<value>/kakao/payPopUp</value>
+          				<value>/kakao/paySuccess</value>
             		</list>
             	</constructor-arg>
             </bean>

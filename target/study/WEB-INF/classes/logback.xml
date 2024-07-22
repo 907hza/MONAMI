@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="HOME" value="C:/project/webapps/hiboard/logs" />
+    <property name="HOME" value="C:/project/webapps/SistStudyProject/logs" />
     <property name="ARCHIVED" value="${HOME}/archived" />
     <property name="LOG_NAME" value="sist" />
         
